@@ -3,6 +3,10 @@ package com.pharmacy;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/*
+ * This class prepares HashMap with drugname as key and drug object as value 
+ * 
+ * */
 public class DrugSales {
 	public HashMap<String, ArrayList> drugPrescribers = new HashMap<String, ArrayList>();
 	public static HashMap<String, Drug> hm = new HashMap<String, Drug>(); 

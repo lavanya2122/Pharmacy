@@ -18,6 +18,9 @@ import static java.util.Map.Entry.*;
 import com.pharmacy.Drug;
 import com.sun.crypto.provider.HmacMD5;
 
+/*
+ * This is main class 
+ * */
 public class PharmacyProgram 
 {
 	static String exFile = ".\\input\\itcont.txt";
@@ -26,6 +29,7 @@ public class PharmacyProgram
 	public static HashMap<String, ArrayList> drugPrescribers = new HashMap<String, ArrayList>();
 	static void readFile(String fname)
 	{
+		String INPUT_FILE_HEADER = "id,prescriber_last_name,prescriber_first_name,drug_name,drug_cost";
 		if(fname == "") {
 			fname = exFile;
 		}
@@ -38,7 +42,6 @@ public class PharmacyProgram
 				int recCount = 0;
 				while ((st = br.readLine()) != null) { 
 					String[] arr  = st.split(",");
-					System.out.println(st);
 					//Only process records that have 5 elements in input record 
 					if(arr.length == 5 && recCount > 0) {
 						//Get Input values 
@@ -50,27 +53,6 @@ public class PharmacyProgram
 						
 						String thisRecPrescriber = firstName + lastName;
 						
-						/*
-						if(!(hm.containsKey(drugName))){
-							Drug d = new Drug(1, drugName, cost, firstName, lastName);
-							hm.put(drugName, d);
-						}else {
-							Drug d = hm.get(drugName);
-							Double totalCost = d.getTotalcost();
-							String prescriber = d.getPrescriberFullName();
-							
-							//If same prescriber prescribed this drug earlier increment counter by 1 else consider it as new sale for new prescriber
-							//int counter = d.getCount();
-							int counter = d.getPrescriberCount();
-							System.out.println("prescriber count "+counter);
-							if(counter > 1) {
-								totalCost = totalCost + cost;
-							}
-							Drug dr = new Drug(counter, drugName, totalCost, firstName, lastName);
-							hm.put(drugName, dr);
-						}
-						*/
-						
 						Drug dRecord = new Drug(id, drugName,  firstName, lastName, cost);
 						DrugSales ds = new DrugSales(drugPrescribers);
 						if(dRecord != null) {
@@ -79,51 +61,47 @@ public class PharmacyProgram
 						}
 						
 					}else {
-						System.out.println("Invalid Record at line "+recCount);
+						if(recCount == 0 && !(st.equalsIgnoreCase(INPUT_FILE_HEADER))) {
+							//terminate further processing if input file format is incorrect
+							System.out.println("Invalid file format");
+							break;
+						}else if(recCount > 0) {
+							System.out.println("Invalid Record at line "+recCount);
+						}
 					}
 					recCount++;
 				}
 				//System.out.println(hm);
-				System.out.println("\n");
+				//System.out.println("\n");
 		
 	    }catch(IOException ie) 
 			{
 	    		ie.printStackTrace();
-			}
+	    	}
 
 	}
 	 
 	static HashMap<String, Drug> sortMap(HashMap<String, Drug> totalsDict) {
 		HashMap<String, Drug> sortedMap = new HashMap<String, Drug>();
 		 
-        // now let's sort the map in decreasing order of value
+        // now sort the map in decreasing order of value
 		sortedMap = totalsDict.entrySet()
                 .stream()
                 .sorted(Entry.comparingByValue(
-                        Comparator.comparing(Drug::getPrescriberFullName)
-                                  .thenComparingDouble(Drug::getCost)))
+                        Comparator.comparingDouble(Drug::getCost).reversed()
+                                  .thenComparing(Drug::getName)))
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue,
                         (e1, e2) -> e1, LinkedHashMap::new));
 		return sortedMap;
 	}
 	
-	/*static List sortMap(HashMap<String, Drug> totalsDict) {
-		List<Map.Entry<String, Drug>> sortedEntries = new ArrayList<>(totalsDict.entrySet());
-		Collections.sort(sortedEntries,
-		    Map.Entry.comparingByValue(
-	        Comparator
-	            .comparingDouble(Drug::getCost)
-	            .thenComparing(Drug::getPrescriberFullName)));
-		
-		return sortedEntries;
-	}*/
-	
+	//Write to File 
 	static void writeToFile(HashMap<String, Drug> sortedMap) {
 		String FILE_HEADER = "drug_name,num_prescriber,total_cost";
 		String NEW_LINE = "\n";
 		String COMMA_SEP = ",";
 		try {
-			System.out.println("Creating File");
+			//System.out.println("Creating File");
 			String filePath = ".\\output\\top_cost_drug.txt";
 			File file = new File(filePath);
 			FileWriter fr = new FileWriter(filePath); 
@@ -155,13 +133,11 @@ public class PharmacyProgram
 		readFile(str);
 		HashMap<String, Drug> sortedMap = sortMap(hm);
 		//List sortedMap = sortMap(hm);
-		System.out.println("sorted here "+sortedMap);
 		Set set = sortedMap.keySet();
 		Iterator<String> iterator = set.iterator();
 		while(iterator.hasNext()) {
 			String thisKey = iterator.next();
 			Drug d = sortedMap.get(thisKey);
-			//System.out.println(d.getName() +"=="+d.getCost()+"=="+d.getCount());
 		}
 		
 		writeToFile(sortedMap);

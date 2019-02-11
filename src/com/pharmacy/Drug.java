@@ -2,6 +2,9 @@ package com.pharmacy;
 
 import java.util.HashMap;
 
+/*
+ * This class prepares individual drug record with setters & getters to access each record
+ * */
 public class Drug 
 {
 	String id;
