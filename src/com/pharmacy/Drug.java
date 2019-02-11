@@ -20,19 +20,16 @@ public class Drug
 		this.cost = d;
 		this.pFirstName = firstName;
 		this.pLastName = lastName;
-		//System.out.println(this.count+"==="+this.name+"==="+this.totalcost);
 	}
 	
 	Drug(String s, int count, Double d){
 		this.name=s;
 		this.cost = d;
 		this.count = count;
-		//System.out.println(this.count+"==="+this.name+"==="+this.totalcost);
 	}
 	
 	
 	public Drug() {
-		// TODO Auto-generated constructor stub
 		super();
 	}
 

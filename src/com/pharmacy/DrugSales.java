@@ -46,7 +46,6 @@ public class DrugSales {
 		}
 		count = prescriberAL.size();
 		drugPrescribers.put(drugName, prescriberAL);
-		//System.out.println(drugPrescribers);
 		return count;
 	}
 }

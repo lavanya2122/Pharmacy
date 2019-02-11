@@ -24,9 +24,11 @@ import com.sun.crypto.provider.HmacMD5;
 public class PharmacyProgram 
 {
 	static String exFile = ".\\input\\itcont.txt";
-	//Drug d = new Drug();
+	static String outputFilePath = ".\\output\\top_cost_drug.txt";
 	public static HashMap<String, Drug> hm = new HashMap<String, Drug>(); 
 	public static HashMap<String, ArrayList> drugPrescribers = new HashMap<String, ArrayList>();
+	
+	//Read input file, if file name is not supplied through main method argument then static file will be picked from input folder
 	static void readFile(String fname)
 	{
 		String INPUT_FILE_HEADER = "id,prescriber_last_name,prescriber_first_name,drug_name,drug_cost";
@@ -57,7 +59,6 @@ public class PharmacyProgram
 						DrugSales ds = new DrugSales(drugPrescribers);
 						if(dRecord != null) {
 							ds.addDrugRecord(dRecord, hm);
-							//System.out.println(ds.getPrescriberCount(drugName, thisRecPrescriber));
 						}
 						
 					}else {
@@ -71,9 +72,7 @@ public class PharmacyProgram
 					}
 					recCount++;
 				}
-				//System.out.println(hm);
-				//System.out.println("\n");
-		
+						
 	    }catch(IOException ie) 
 			{
 	    		ie.printStackTrace();
@@ -84,7 +83,7 @@ public class PharmacyProgram
 	static HashMap<String, Drug> sortMap(HashMap<String, Drug> totalsDict) {
 		HashMap<String, Drug> sortedMap = new HashMap<String, Drug>();
 		 
-        // now sort the map in decreasing order of value
+        // now sort the map in decreasing order of cost and then by drug name
 		sortedMap = totalsDict.entrySet()
                 .stream()
                 .sorted(Entry.comparingByValue(
@@ -100,9 +99,12 @@ public class PharmacyProgram
 		String FILE_HEADER = "drug_name,num_prescriber,total_cost";
 		String NEW_LINE = "\n";
 		String COMMA_SEP = ",";
+		String filePath = outputFilePath;
 		try {
-			//System.out.println("Creating File");
-			String filePath = ".\\output\\top_cost_drug.txt";
+			if(filePath == "") {
+				filePath = ".\\output\\top_cost_drug.txt";
+			}	
+			
 			File file = new File(filePath);
 			FileWriter fr = new FileWriter(filePath); 
 			fr.append(FILE_HEADER.toString());
@@ -130,9 +132,9 @@ public class PharmacyProgram
 	public static void main(String args[])
 	{
 		String str= args[0];
+		outputFilePath = args[1];
 		readFile(str);
 		HashMap<String, Drug> sortedMap = sortMap(hm);
-		//List sortedMap = sortMap(hm);
 		Set set = sortedMap.keySet();
 		Iterator<String> iterator = set.iterator();
 		while(iterator.hasNext()) {
