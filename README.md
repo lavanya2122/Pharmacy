@@ -12,6 +12,9 @@ Since HashMap maintains unique key, there will not be repetition of same drug mu
 
 Comparator is being used to sort the HashMap to order records by total cost and then by Drug Name when there is a match between Drug totals
 
+Output file: 
+A text file with name 'top_cost_drug.txt' will be created in output folder after successful execution of the program
+
 Assumptions: 
 It is assumed that input file contains exactly 5 columns of data (Id, First Name, Last Name, Drug Name, Cost) 
 Any records that have more/ less than 5 columns are ignored with a print statement to the console with the record number that is being skipped
